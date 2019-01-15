@@ -19,6 +19,8 @@ which is pretty good for Python.
   iterations
 - Save images of desired size
 
+<img src="Figure_5.png" width="70%" height="70%"> 
+
 ## What you need
 
 - CUDA drivers and compatible GPU
