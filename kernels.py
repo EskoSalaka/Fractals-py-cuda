@@ -70,6 +70,21 @@ def exp_m(image, topleft, xstride, ystride, max_iter):
         get_color1(image, x, y, i, max_iter)
 
 @cuda.jit('void(int8[:,:,:], complex128, float64, float64, int32)')
+def sinhcosh(image, topleft, xstride, ystride, max_iter):
+    y, x = cuda.grid(2)
+
+    if x < image.shape[1] and y < image.shape[0]:
+        c = nb.complex128(topleft + x * xstride - 1j * y * ystride)
+        z = c
+
+        i = 0
+        while i < max_iter and not isinf(z):
+            z = sinh(z)*cosh(z) + c
+            i += 1
+
+        get_color1(image, x, y, i, max_iter)
+
+@cuda.jit('void(int8[:,:,:], complex128, float64, float64, int32)')
 def mandelbrot(image, topleft, xstride, ystride, max_iter):
     y, x = cuda.grid(2)
 

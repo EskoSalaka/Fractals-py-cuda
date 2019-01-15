@@ -1,6 +1,9 @@
 # Fractals with Python and CUDA
 
-<img src="Images/Figure_1.png" width="70%" height="70%"> 
+<img src="Figure_1.png" width="70%" height="70%"> 
+<img src="Figure_2.png" width="70%" height="70%"> 
+<img src="Figure_3.png" width="70%" height="70%"> 
+<img src="Figure_4.png" width="70%" height="70%"> 
 
 Fractals is a small project for exploring different kinds of fractals and colouring schemes with Python. It is powered 
 by CUDA which is able to calculate most stuff fast enough for visualizing on-the-fly. For reference, rendering the 
