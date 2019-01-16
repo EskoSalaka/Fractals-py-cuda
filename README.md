@@ -1,10 +1,5 @@
 # Fractals with Python and CUDA
 
-<img src="Figure_1.png" width="70%" height="70%"> 
-<img src="Figure_2.png" width="70%" height="70%"> 
-<img src="Figure_3.png" width="70%" height="70%"> 
-<img src="Figure_4.png" width="70%" height="70%"> 
-
 Fractals is a small project for exploring different kinds of fractals and colouring schemes with Python. It is powered 
 by CUDA which is able to calculate most stuff fast enough for visualizing on-the-fly. For reference, rendering the 
 standard 1500x1000-pixel Mandelbrot set with 1000 iterations takes about 0.08s on my computer with a GeForce GTX 970
@@ -17,9 +12,13 @@ which is pretty good for Python.
 - For larger images and more intensive calculations you can also split the calculations over multiple kernel calls
 - Explore fractals on a matplotlib imshow-canvas by zooming in/out, moving around and controlling maximum number of 
   iterations
-- Save images of desired size
+- Save images of desired size or the whole matplotlib figure
 
-<img src="Figure_5.png" width="70%" height="70%"> 
+<img src="Fig.png" width="70%" height="70%"> 
+<img src="Figure_1.png" width="70%" height="70%"> 
+<img src="Figure_2.png" width="70%" height="70%"> 
+<img src="Figure_3.png" width="70%" height="70%"> 
+<img src="Figure_4.png" width="70%" height="70%"> 
 
 ## What you need
 
@@ -175,5 +174,7 @@ if __name__ == "__main__":
 ## Further reading
 
 http://numba.pydata.org/numba-doc/0.13/CUDAJit.html
+
 https://numba.pydata.org/numba-doc/latest/cuda/index.html
+
 https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
