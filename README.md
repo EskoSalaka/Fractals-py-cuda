@@ -29,7 +29,8 @@ which is pretty good for Python.
 ## A short guide and few examples
 
 For rendering and saving the image or starting up the exploration mode you only need to call
-```Python
+
+```python
 create_image(kernel, 
              xmin, xmax, ymin, ymax,
              max_iter, 
@@ -42,7 +43,7 @@ create_image(kernel,
              
 or 
 
-```Python
+```python
 Explorer(kernel, 
          xmin, xmax, ymin, ymax,
          max_iter, 
@@ -76,7 +77,7 @@ smallest). For example for for the range x=(-1, 2) and y=(-1, 1) the size of the
 
 Lets take a look at a very basic simple kernel to calculate the Mandelbrot set
 
-```Python
+```python
 @cuda.jit('void(int8[:,:,:], complex128, float64, float64, int32)')
 def mandelbrot(image_array, topleft, xstride, ystride, max_iter):
     y, x = cuda.grid(2)
@@ -102,7 +103,7 @@ want to implement your own fractal map, you would need to just change the iterat
 The function `get_log_color_rgb` is just a simple device function callable inside the kernels which "colours" a given 
 pixel in position (x,y) according to some logic. Note the argument `device=True`
 
-```Python
+```python
 @cuda.jit('void(int8[:,:,:], int32, int32, int32, int32)', device=True)
 def get_log_color_rgb(image_array, x, y, iterations, max_iterations):
     if iterations == max_iterations:
@@ -126,7 +127,7 @@ def get_log_color_rgb(image_array, x, y, iterations, max_iterations):
 
 Another useful device-function would be for example 
 
-```Python
+```python
 @cuda.jit('complex128(complex128, float64)', device=True)
 def power(c, x):
     return abs(c) ** x * exp(phase(c) * x * 1j)
@@ -135,7 +136,7 @@ def power(c, x):
 For splitting the rendering into multiple smaller kernels you need to use a slightly different kind of kernels. Here
 is for example a split kernel for mandelbrot
 
-```Python
+```python
 @cuda.jit('void(int8[:,:,:], complex128, float64, float64, int32, int32, int32)')
 def mandelbrot_split(image_array, topleft, xstride, ystride, max_iter, split_start, split_end):
     y, x = cuda.grid(2)
@@ -165,7 +166,7 @@ More info on the timeout here: https://docs.nvidia.com/gameworks/content/develop
 Here's an example how to invoke the explorer with our mandelbrot kernel, 1000-pixel base accuracy, 1000 max 
 iterations and bilinear interpolation for x=(-2, 1) and y(-1,1)
 
-```Python
+```python
 from base import Explorer
 from kernels import mandelbrot
 
@@ -177,7 +178,7 @@ Finally, let's look at a more complex example. Let's try to reproduce the power-
 http://www.apmaths.uwo.ca/~rcorless/frames/PAPERS/LambertW/ with a very lazy way to detect cycles up to 3. The cycles
 are coloured with simple blue.
 
-```Python
+```python
 @cuda.jit('void(int8[:,:,:], complex128, float64, float64, int32)')
 def lambert(image_array, topleft, xstride, ystride, max_iter):
     y, x = cuda.grid(2)
@@ -206,7 +207,7 @@ def lambert(image_array, topleft, xstride, ystride, max_iter):
 
 Note, that here we are now iterating until infinity by using the `cmath`-library function `isinf(z)`. 
 
-```Python
+```python
 from base import Explorer
 from kernels import lambert
 
