@@ -2,21 +2,21 @@ import math
 import sys
 import numpy as np
 import numba as nb
-from matplotlib.widgets import Slider
-import matplotlib
-from matplotlib.backend_tools import ToolBase
 
+from matplotlib.widgets import Slider
+from matplotlib.backend_tools import ToolBase
 
 from numba import cuda
 from pylab import plt
 from PIL import Image
 from timeit import default_timer as timer
-
-# matplotlib.rcParams['savefig.dpi'] = 1000
-# matplotlib.rcParams['savefig.frameon'] = False
-# matplotlib.rcParams['savefig.bbox'] = 'tight'
-matplotlib.rcParams["toolbar"] = "toolmanager"
 from tkinter import filedialog
+
+import matplotlib
+matplotlib.rcParams['savefig.dpi'] = 1000
+matplotlib.rcParams['savefig.frameon'] = False
+matplotlib.rcParams['savefig.bbox'] = 'tight'
+matplotlib.rcParams["toolbar"] = "toolmanager"
 
 
 def create_image_array(kernel, xmin, xmax, ymin, ymax, max_iter, base_accuracy, splits=None, *args):
@@ -39,15 +39,11 @@ def create_image_array(kernel, xmin, xmax, ymin, ymax, max_iter, base_accuracy, 
 
     return image_array
 
-# Very similar to matplotlib's mandelbrot example
+
 class Explorer:
     def __init__(self, kernel, xmin, xmax, ymin, ymax, base_accuracy, max_iter, interpolation='none', splits=None, *args):
         fig, ax = plt.subplots()
 
-        self.xmin = xmin
-        self.xmax = xmax
-        self.ymin = ymin
-        self.ymax = ymax
         self.base_accuracy = base_accuracy
         self.height = base_accuracy
         self.width = base_accuracy
@@ -81,28 +77,23 @@ class Explorer:
         self.slider = Slider(self.slider_box, 'Max iter:', 100, 50000, valinit=max_iter, valstep=10)
         self.slider.set_val(max_iter)
         self.slider.on_changed(self.on_slider_change)
+        plt.subplots_adjust(bottom=0.1, top=0.95)
 
+
+    def show(self):
         self.ax.imshow(np.zeros((100, 100, 3), dtype=np.uint8),
                        origin='lower',
                        extent=(self.x.min(), self.x.max(), self.y.min(), self.y.max()),
                        interpolation=self.interpolation,
                        resample=True)
-
-        # plt.subplots_adjust(bottom=0.1, top=0.95)
-        ax.callbacks.connect('ylim_changed', self.draw)
-
+        self.ax.callbacks.connect('ylim_changed', self.draw)
         self.draw(self.ax)
+        plt.show()
 
     def on_slider_change(self, *args):
         self.draw(self.ax)
 
-    def save_fig(self, *args):
-        path = filedialog.asksaveasfilename()
-        image = Image.fromarray(self.image_array, mode='RGB')
-        image.save(path, "PNG", quality=95, optimize=False)
-
     def draw(self, ax):
-
         ax.set_autoscale_on(False)
         dims = ax.get_window_extent().bounds
 
@@ -139,19 +130,17 @@ def create_image(kernel,
     if show: image.show()
 
 
-def run_kernel(f_kernel, image, topleft, xstride, ystride, max_iter, *args):
+def run_kernel(kernel, image, topleft, xstride, ystride, max_iter, *args):
     start = timer()
 
     dimage = cuda.to_device(image)
-    threadsperblock = (32, 4)
+    threadsperblock = (32, 16)
     blockspergrid = (math.ceil(image.shape[0] / threadsperblock[0]), math.ceil(image.shape[1] / threadsperblock[1]))
-    print(ystride)
 
-    f_kernel[blockspergrid, threadsperblock](dimage, topleft, xstride, ystride, max_iter, *args)
+    kernel[blockspergrid, threadsperblock](dimage, topleft, xstride, ystride, max_iter, *args)
     dimage.to_host()
 
-    dt = timer() - start
-    print("Fractal calculated on GPU in %f s" % dt)
+    sys.stdout.write('\r' + "Fractal calculated on GPU in %f s" % (timer() - start))
 
 def run_kernel_split(kernel, image, topleft, xstride, ystride, max_iter, splits, *args):
     start = timer()
@@ -169,7 +158,6 @@ def run_kernel_split(kernel, image, topleft, xstride, ystride, max_iter, splits,
                                                        *args)
         dimage.copy_to_host(image)
 
-    dt = timer() - start
-    sys.stdout.write('\r' + "Fractal calculated on GPU in %f s" % dt)
+    sys.stdout.write('\r' + "Fractal calculated on GPU in %f s" % (timer() - start))
 
 
