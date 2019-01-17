@@ -212,7 +212,7 @@ from base import Explorer
 from kernels import lambert
 
 if __name__ == "__main__":
-    Explorer(lambert, -2, 1, -1, 1, 1000, 1000, interpolation='bilinear').show()
+    Explorer(lambert, -5, 2, -2, 2, 1000, 1000, interpolation='bilinear').show()
 ```
 
 As a reference, this fractal with the given specs takes about ~2s to render on my computer, so it might be a good
