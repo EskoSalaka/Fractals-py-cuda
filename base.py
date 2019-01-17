@@ -66,8 +66,10 @@ class Explorer:
                 path = filedialog.asksaveasfilename(initialfile='Fractal_1',
                                                     defaultextension='png',
                                                     filetypes=[('PNG', ".png")])
-                image = Image.fromarray(self.image_array, mode='RGB')
-                image.save(path, "PNG", quality=95, optimize=False)
+                
+                if path:
+                    image = Image.fromarray(self.image_array, mode='RGB')
+                    image.save(path, "PNG", quality=95, optimize=False)
 
         tm = fig.canvas.manager.toolmanager
         self.image_saver = tm.add_tool("Save Image", ImageSaver)
